@@ -15,11 +15,18 @@
     <div class="main">
       <div class="actionRowsWrap">
         <div class="actionRow">
+          <button id="getSecretKey">Send Secret Key </button>
+          <label>
+            Enter Email 
+            <input id="emailID" type="text" value="jrw@mit.edu" />
+          </label>
+        </div>
+        </div>
+        <div class="actionRow">
           <label>
             AvatarID
             <input id="avatarID" type="text" value="fad7274c2d524f96895d0c82fde5b570" />
           </label>
-
           <label>
             VoiceID
             <input id="voiceID" type="text" value="e1e788e677ee482194baf12fa27c1182" />
@@ -31,7 +38,7 @@
           </div>
           <div class="actionRow">
 
-          <button id="newBtn">New</button>
+          <button id="newSessionBtn">New</button>
           <button id="startBtn">Start</button>
           <button id="closeBtn">Close</button>
           <button id="speakBtn">Speak</button>
@@ -50,7 +57,7 @@
             <input type="checkbox" id="switchAgent" />
             <span class="slider round"></span>
           </label>
-          <button id="newChatBtn">New Chat</button>
+          <button id="newChatBtn">New OpenAI Thread</button>
         </div>
       </div>
 
