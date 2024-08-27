@@ -14,6 +14,7 @@ async function getKeys() {
 }
 const heygen_API = await getKeys();
 let assistant_id;
+let email_id;
 
 const apiKey = heygen_API.apiKey;
 const SERVER_URL = heygen_API.serverUrl;
@@ -37,7 +38,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
 const statusElement = document.querySelector('#status');
-updateStatus(statusElement, 'Please click the new button to create the stream first.');
+updateStatus(statusElement, 'Please enter your email address and click send secret key. Now replace you email address with the secret key and click new button');
+updateStatus(statusElement, 'The new button creates the Avatar stream to HeyGen.');
 
 function onMessage(event) {
   const message = event.data;
@@ -51,8 +53,13 @@ async function createNewSession() {
   const avatar = avatarID.value;
   const voice = voiceID.value;
   assistant_id = agentID.value;
+  email_id = emailID.value;
+  if (email_id != "secret-key") {
+    updateStatus(statusElement, "secret key does not match")
+    return
+  }
 
-  console.log(`AvatarID: ${avatar}, VoiceID: ${voice}, AgentID I ${assistant_id}`);
+  console.log(`Email: ${email_id}, AvatarID: ${avatar}, VoiceID: ${voice}, AgentID I ${assistant_id}`);
 
   // call the new interface to get the server's offer SDP and ICE server to create a new RTCPeerConnection
   sessionInfo = await newSession('low', avatar, voice);
@@ -308,7 +315,7 @@ async function closeConnectionHandler() {
   updateStatus(statusElement, 'Connection closed successfully');
 }
 
-document.querySelector('#newBtn').addEventListener('click', createNewSession);
+document.querySelector('#newSessionBtn').addEventListener('click', createNewSession);
 document.querySelector('#startBtn').addEventListener('click', startAndDisplaySession);
 document.querySelector('#repeatBtn').addEventListener('click', repeatHandler);
 document.querySelector('#closeBtn').addEventListener('click', closeConnectionHandler);
@@ -316,9 +323,34 @@ document.querySelector('#talkChatBtn').addEventListener('click', talkChatHandler
 document.querySelector('#speakBtn').addEventListener('click', speakHandler);
 document.querySelector('#stopBtn').addEventListener('click', stopRecording);
 document.querySelector('#newChatBtn').addEventListener('click', newChatHandler);
-
+document.querySelector('#getSecretKey').addEventListener('click', newSecret);
+// new Secret - send email with secret to email address
+async function newSecret() {
+  email_id = emailID.value
+  const response = await fetch(`./submitEmail`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email_id }),
+  });
+  if (response.status === 500) {
+    console.error('Server error');
+    updateStatus(
+      statusElement,
+      'submit Email Error',
+    );
+    throw new Error('Server error');
+  } else if (response.status === 200) {
+    let data = document.getElementById("secret");
+    data.innerHTML = response;
+    updateStatus(statusElement, `New Secret sent to email}`);
+  }
+  // no need to return anything. 
+}
 
 // new chat handler - gets a new thread/context window - only needed with OpenAI Assistant
+
 async function newChatHandler() {
   // get a new thread up in Server
   const response = await fetch(`./newChat`, {
