@@ -31,7 +31,15 @@ console.log(`OPENAI_API_KEY  ${process.env.OPENAI_API_KEY} `);
 const systemSetup = "you are a demo streaming avatar from HeyGen, an industry-leading AI generation product that specialize in AI avatars and videos.\nYou are here to showcase how a HeyGen streaming avatar looks and talks.\nPlease note you are not equipped with any specific expertise or industry knowledge yet, which is to be provided when deployed to a real customer's use case.\nAudience will try to have a conversation with you, please try answer the questions or respond their comments naturally, and concisely. - please try your best to response with short answers, limit to one sentence per response, and only answer the last question."
 
 app.use(express.static(path.join(__dirname, '.')));
-
+app.get('/', (req, res) => {
+  res.send(`
+      <form action="/submit-email" method="post">
+          <label for="email">Enter your email:</label>
+          <input type="email" id="email" name="email" required>
+          <button type="submit">Submit</button>
+      </form>
+  `);
+});
 // This will call OpenAI chat completion endpoint with the prompt provided in the request body
 app.post('/openai/chat', async (req, res) => {
   try {
@@ -168,6 +176,40 @@ app.post('/whisper', upload.single('audio'), async (req, res) => {
   }
 });
 
+// Create a Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: 'your-email@gmail.com',
+      pass: 'your-email-password'
+  }
+});
+
+// Serve the HTML form
+
+
+// Handle form submission
+app.post('/submit-email', (req, res) => {
+  const email = req.body.email;
+
+  // Generate a random key
+  const key = crypto.randomBytes(20).toString('hex');
+
+  // Send email with the key
+  const mailOptions = {
+      from: 'your-email@gmail.com',
+      to: email,
+      subject: 'Your Key for the App',
+      text: `Your key is: ${key}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          return res.status(500).send('Error sending email');
+      }
+      res.send('Email sent successfully');
+  });
+});
 
 app.listen(3000, function () {
   console.log('App is listening on port 3000!');
