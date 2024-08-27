@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 const statusElement = document.querySelector('#status');
 updateStatus(statusElement, 'Please enter your email address and click send secret key. Now replace you email address with the secret key and click new button');
-updateStatus(statusElement, 'The new button creates the Avatar stream to HeyGen.');
 
 function onMessage(event) {
   const message = event.data;
@@ -345,6 +344,8 @@ async function newSecret() {
     let data = document.getElementById("secret");
     data.innerHTML = response;
     updateStatus(statusElement, `New Secret sent to email}`);
+    updateStatus(statusElement, 'Replace Email with the secret and now click New button to being setup to HeyGen.');
+
   }
   // no need to return anything. 
 }
