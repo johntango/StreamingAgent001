@@ -175,13 +175,12 @@ app.post('/whisper', upload.single('audio'), async (req, res) => {
     res.status(500).send('Failed to process audio');
   }
 });
-
-// Create a Nodemailer transporter
+/ Create a Nodemailer transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: 'your-email@gmail.com',
-      pass: 'your-email-password'
+    user: 'jrwtango@gmail.com',
+    pass: 'eieu tibh lxvo pgap'
   }
 });
 
@@ -189,27 +188,29 @@ const transporter = nodemailer.createTransport({
 
 
 // Handle form submission
-app.post('/submit-email', (req, res) => {
-  const email = req.body.email;
-
+app.post('/submitEmail', async (req, res) => {
+  const email = req.body.email_id;
+  let key = "secret_key"
   // Generate a random key
-  const key = crypto.randomBytes(20).toString('hex');
-
+  //const key = crypto.randomBytes(20).toString('hex');
   // Send email with the key
   const mailOptions = {
-      from: 'your-email@gmail.com',
-      to: email,
-      subject: 'Your Key for the App',
-      text: `Your key is: ${key}`
+    from: 'jrwtango@gmail.com',
+    to: email,
+    subject: 'Your Key for the App',
+    text: `Your key is: ${key}`
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-          return res.status(500).send('Error sending email');
-      }
-      res.send('Email sent successfully');
+  transporter.sendMail(mailOptions, async (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('Error sending email. Please try again later.');
+    } else {
+      console.log('Email sent successfully:', info.response);
+      res.status(200).send('Email sent successfully. Please check your inbox.');
+    }
   });
-});
+})
 
 app.listen(3000, function () {
   console.log('App is listening on port 3000!');
