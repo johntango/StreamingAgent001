@@ -7,6 +7,7 @@ const FormData = require('form-data');
 const fs = require('fs');
 const { Readable } = require('stream');
 const { toFile } = require("openai/uploads");
+const nodemailer = require('nodemailer');
 
 app.use(express.json());
 
@@ -175,7 +176,7 @@ app.post('/whisper', upload.single('audio'), async (req, res) => {
     res.status(500).send('Failed to process audio');
   }
 });
-/ Create a Nodemailer transporter
+// Create a Nodemailer transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -190,7 +191,7 @@ const transporter = nodemailer.createTransport({
 // Handle form submission
 app.post('/submitEmail', async (req, res) => {
   const email = req.body.email_id;
-  let key = "secret_key"
+  let key = "secret123"
   // Generate a random key
   //const key = crypto.randomBytes(20).toString('hex');
   // Send email with the key
